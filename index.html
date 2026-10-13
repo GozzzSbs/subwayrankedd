@@ -1,12 +1,937 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SubwayRanked - Game</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SubwayRanked | Run to the Top</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #030817;
+  --panel: #09152d;
+  --cyan: #00eaff;
+  --purple: #a855ff;
+  --text: #f4f7ff;
+  --muted: #91a7d4;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 75% 5%, #10295d 0%, transparent 38%),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+  min-height: 100vh;
+}
+
+button, a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header {
+  height: 76px;
+  padding: 0 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  background: rgba(3, 8, 23, .92);
+  border-bottom: 1px solid #18335b;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(15px);
+}
+
+.logo {
+  font-family: Orbitron, sans-serif;
+  font-size: 23px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.logo span {
+  color: var(--cyan);
+}
+
+nav {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+nav a {
+  color: #c3d2f1;
+  font-size: 14px;
+  transition: .2s;
+}
+
+nav a:hover {
+  color: var(--cyan);
+}
+
+.nav-button, .primary-button {
+  background: var(--cyan);
+  color: #00101e;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 22px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 25px #00eaff35;
+  transition: .2s;
+}
+
+.nav-button:hover, .primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px #00eaff65;
+}
+
+.hero {
+  max-width: 1250px;
+  margin: auto;
+  padding: 85px 30px 45px;
+  display: grid;
+  grid-template-columns: 1fr .85fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.tag {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  margin-bottom: 22px;
+}
+
+h1 {
+  font-family: Orbitron, sans-serif;
+  font-size: clamp(38px, 5.5vw, 70px);
+  line-height: 1.12;
+  font-weight: 900;
+  letter-spacing: -3px;
+}
+
+h1 span {
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.description {
+  margin-top: 22px;
+  max-width: 460px;
+  line-height: 1.8;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 13px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.secondary-button {
+  display: inline-block;
+  border: 1px solid var(--purple);
+  background: #a855ff12;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #a855ff30;
+}
+
+.hero-art {
+  min-height: 330px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #17629a;
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse at 50% 50%, #154d8c 0%, transparent 50%),
+    linear-gradient(145deg, #101e50, #070b1c 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .5;
+  background-image:
+    linear-gradient(#16457455 1px, transparent 1px),
+    linear-gradient(90deg, #16457455 1px, transparent 1px);
+  background-size: 28px 28px;
+  transform: perspective(220px) rotateX(15deg) scale(1.3);
+}
+
+.moon {
+  width: 190px;
+  height: 190px;
+  position: absolute;
+  top: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #bafaff, #268cff 48%, #713aff 75%);
+  box-shadow: 0 0 75px #167dff88;
+  opacity: .85;
+}
+
+.runner {
+  position: relative;
+  z-index: 2;
+  font-size: 120px;
+  filter: drop-shadow(0 0 25px #00eaffaa);
+  animation: float 2s ease-in-out infinite;
+}
+
+.coin {
+  position: absolute;
+  z-index: 3;
+  font-size: 34px;
+  animation: float 2.4s ease-in-out infinite;
+}
+
+.coin.one { left: 13%; bottom: 28%; }
+.coin.two { right: 14%; top: 28%; animation-delay: .5s; }
+.coin.three { right: 24%; bottom: 18%; animation-delay: .9s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+.stats {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 30px 35px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  padding: 25px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #0c1c3a, #071126);
+  border: 1px solid #15517b;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.stat-value {
+  margin-top: 12px;
+  font-family: Orbitron, sans-serif;
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.stat-card:nth-child(2) { border-color: #7141c9; }
+.stat-card:nth-child(3) { border-color: #087d8c; }
+
+.section {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 15px 30px 65px;
+  scroll-margin-top: 95px;
+}
+
+.leaderboard {
+  background: linear-gradient(145deg, #0b1730, #050c1e);
+  border: 1px solid #183d70;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.section-heading h2 {
+  font-family: Orbitron, sans-serif;
+  font-size: 23px;
+}
+
+.section-heading p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.table-head, .player-row {
+  display: grid;
+  grid-template-columns: 75px 1fr 130px;
+  align-items: center;
+  gap: 15px;
+}
+
+.table-head {
+  color: #7799d0;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 12px;
+  border-bottom: 1px solid #1a3762;
+}
+
+.player-row {
+  margin-top: 9px;
+  padding: 13px;
+  border: 1px solid #23416c;
+  background: #0b1730;
+  border-radius: 12px;
+}
+
+.player-row:first-of-type {
+  border-color: #dcae34;
+}
+
+.rank {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.player-name {
+  font-weight: 800;
+}
+
+.player-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.score {
+  text-align: right;
+  font-family: Orbitron, sans-serif;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.game-panel {
+  display: none;
+  margin-top: 24px;
+  padding: 22px;
+  background: #050b19;
+  border: 1px solid var(--cyan);
+  border-radius: 15px;
+}
+
+.game-panel.active {
+  display: block;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+#gameCanvas {
+  width: 100%;
+  max-width: 650px;
+  display: block;
+  margin: auto;
+  background: #08152c;
+  border: 1px solid #183e6c;
+  border-radius: 12px;
+  touch-action: manipulation;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.game-controls button {
+  min-width: 85px;
+}
+
+#gameMessage {
+  text-align: center;
+  margin: 15px 0;
+  color: var(--muted);
+}
+
+footer {
+  border-top: 1px solid #172a4c;
+  padding: 25px;
+  text-align: center;
+  color: #7085ad;
+  font-size: 12px;
+}
+
+@media (max-width: 800px) {
+  header { padding: 0 5%; }
+  nav { gap: 12px; }
+  nav a { font-size: 12px; }
+  .nav-button { display: none; }
+  .hero { grid-template-columns: 1fr; padding-top: 55px; }
+  .hero-art { min-height: 270px; }
+  .stats { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .logo { font-size: 16px; }
+  nav { gap: 10px; }
+  nav a { font-size: 11px; }
+  nav a:nth-child(3), nav a:nth-child(4) { display: none; }
+  .hero, .stats, .section { padding-left: 16px; padding-right: 16px; }
+  h1 { letter-spacing: -1.5px; }
+  .leaderboard { padding: 14px; }
+  .section-heading { align-items: flex-start; flex-direction: column; }
+  .table-head, .player-row { grid-template-columns: 40px 1fr 90px; gap: 8px; }
+  .score { font-size: 11px; }
+}
+</style>
 </head>
+
 <body>
-  <h1>🎮 SubwayRanked</h1>
-  <p>Bienvenue dans le jeu !</p>
+
+<header>
+  <a class="logo" href="#">🎮 Subway<span>Ranked</span></a>
+
+  <nav>
+    <a href="#">Accueil</a>
+    <a href="#jeu">🎮 Jouer</a>
+    <a href="#classement">🏆 Classement</a>
+  </nav>
+
+  <button class="nav-button" onclick="openGame()">▶ JOUER</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="tag">/// LE JEU ENDLESS RUNNER · SUBWAYRANKED</p>
+
+      <h1>PRENDS LA<br><span>1ÈRE PLACE.</span></h1>
+
+      <p class="description">
+        Cours, esquive les obstacles et collecte les pièces.
+        Bats ton record et grimpe au sommet du classement !
+      </p>
+
+      <div class="hero-buttons">
+        <button class="primary-button" onclick="openGame()">▶ JOUER MAINTENANT</button>
+        <a class="secondary-button" href="#classement">🏆 VOIR LE CLASSEMENT</a>
+      </div>
+    </div>
+
+    <div class="hero-art" aria-label="Illustration futuriste">
+      <div class="moon"></div>
+      <span class="coin one">🪙</span>
+      <span class="coin two">✨</span>
+      <span class="coin three">🪙</span>
+      <div class="runner">🏃</div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat-card">
+      <div class="stat-label">🎮 MODE DE JEU</div>
+      <div class="stat-value">RUNNER</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">🏆 TON RECORD</div>
+      <div class="stat-value" id="bestScore">0</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">🪙 PIÈCES COLLECTÉES</div>
+      <div class="stat-value" id="bestCoins">0</div>
+    </div>
+  </section>
+
+  <section class="section" id="jeu">
+    <div class="leaderboard game-panel" id="gamePanel">
+      <div class="section-heading">
+        <div>
+          <h2>🎮 SUBWAY RUN</h2>
+          <p>Évite les obstacles et essaie de battre ton record !</p>
+        </div>
+      </div>
+
+      <div class="game-info">
+        <span>Score : <strong id="currentScore">0</strong></span>
+        <span>Pièces : <strong id="currentCoins">0</strong></span>
+      </div>
+
+      <canvas id="gameCanvas" width="600" height="360"></canvas>
+
+      <p id="gameMessage">Appuie sur JOUER pour commencer.</p>
+
+      <div class="game-controls">
+        <button class="secondary-button" onclick="movePlayer(-1)">⬅ Gauche</button>
+        <button class="primary-button" id="startButton" onclick="startGame()">▶ JOUER</button>
+        <button class="secondary-button" onclick="movePlayer(1)">Droite ➡</button>
+      </div>
+
+      <p style="text-align:center;color:#91a7d4;font-size:12px;margin-top:14px">
+        PC : ← → ou Q / D · Espace pour sauter · Mobile : utilise les boutons
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="classement">
+    <div class="leaderboard">
+      <div class="section-heading">
+        <div>
+          <h2>🏆 TOP JOUEURS</h2>
+          <p>Les meilleurs scores enregistrés sur cet appareil.</p>
+        </div>
+        <span style="color:var(--cyan);font-size:12px">SUBWAYRANKED</span>
+      </div>
+
+      <div class="table-head">
+        <span>RANG</span>
+        <span>JOUEUR</span>
+        <span style="text-align:right">SCORE</span>
+      </div>
+
+      <div id="leaderboardRows"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  SUBWAYRANKED © 2026 · Entraîne-toi, bats ton record et deviens le meilleur !
+</footer>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let running = false;
+let animationId = null;
+let score = 0;
+let coins = 0;
+let lane = 1;
+let jumping = 0;
+let obstacles = [];
+let pickups = [];
+let lastSpawn = 0;
+let speed = 3;
+let lastTime = 0;
+
+const storage = {
+  get(key, fallback) {
+    try {
+      const value = localStorage.getItem(key);
+      return value === null ? fallback : JSON.parse(value);
+    } catch {
+      return fallback;
+    }
+  },
+  set(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {}
+  }
+};
+
+let best = storage.get("subwayranked-best", 0);
+let bestCoins = storage.get("subwayranked-coins", 0);
+let scores = storage.get("subwayranked-scores", []);
+
+function openGame() {
+  document.getElementById("gamePanel").classList.add("active");
+  document.getElementById("jeu").scrollIntoView({ behavior: "smooth" });
+}
+
+function drawScene() {
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const sky = ctx.createLinearGradient(0, 0, 0, h);
+  sky.addColorStop(0, "#101b46");
+  sky.addColorStop(1, "#030817");
+
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, w, h);
+
+  // Immeubles futuristes
+  for (let i = 0; i < 15; i++) {
+    const bw = 25 + (i * 13 % 25);
+    const bh = 65 + (i * 37 % 100);
+    const x = i * 43;
+
+    ctx.fillStyle = i % 2 ? "#101d42" : "#142550";
+    ctx.fillRect(x, 125 - bh / 3, bw, bh);
+
+    ctx.fillStyle = "#00dfff";
+    for (let wy = 0; wy < bh - 15; wy += 18) {
+      if ((i + wy) % 3 !== 0) {
+        ctx.fillRect(x + 6, 135 - bh / 3 + wy, 4, 7);
+      }
+    }
+  }
+
+  // Trois voies
+  const center = w / 2;
+
+  ctx.fillStyle = "#111a31";
+  ctx.beginPath();
+  ctx.moveTo(center - 35, 125);
+  ctx.lineTo(center + 35, 125);
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  ctx.fill();
+
+  // Rails
+  ctx.strokeStyle = "#4e719d";
+  ctx.lineWidth = 5;
+
+  for (let i = -1; i <= 1; i++) {
+    ctx.beginPath();
+    ctx.moveTo(center + i * 24, 125);
+    ctx.lineTo(center + i * 200, h);
+    ctx.stroke();
+  }
+
+  // Traverses
+  ctx.strokeStyle = "#526789";
+  ctx.lineWidth = 3;
+
+  for (let y = 145; y < h; y += 22) {
+    const progress = (y - 125) / (h - 125);
+    const half = 35 + progress * 265;
+
+    ctx.beginPath();
+    ctx.moveTo(center - half, y);
+    ctx.lineTo(center + half, y);
+    ctx.stroke();
+  }
+
+  // Objets
+  obstacles.forEach(o => {
+    const x = laneX(o.lane, o.y);
+
+    if (o.type === "train") {
+      ctx.fillStyle = "#a855ff";
+      ctx.fillRect(x - 33, o.y - 20, 66, 35);
+      ctx.fillStyle = "#15274a";
+      ctx.fillRect(x - 23, o.y - 13, 46, 13);
+      ctx.fillStyle = "#ff4d9d";
+      ctx.fillRect(x - 30, o.y + 8, 60, 4);
+    } else {
+      ctx.fillStyle = "#ff4b69";
+      ctx.fillRect(x - 24, o.y - 8, 48, 28);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(x - 20, o.y - 3, 40, 5);
+    }
+  });
+
+  pickups.forEach(p => {
+    const x = laneX(p.lane, p.y);
+
+    ctx.fillStyle = "#ffd84a";
+    ctx.beginPath();
+    ctx.arc(x, p.y, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = "#fff4ad";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  });
+
+  // Personnage
+  const px = laneX(lane, 295);
+  const py = 285 - jumping;
+
+  ctx.font = "43px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("🏃", px, py);
+
+  // Score dans le jeu
+  ctx.textAlign = "left";
+  ctx.font = "bold 18px Arial";
+  ctx.fillStyle = "#00eaff";
+  ctx.fillText("SUBWAY RANKED", 18, 30);
+}
+
+function laneX(l, y) {
+  const progress = Math.max(0, Math.min(1, (y - 125) / 235));
+  const spacing = 25 + progress * 135;
+  return canvas.width / 2 + (l - 1) * spacing;
+}
+
+function movePlayer(direction) {
+  if (!running) return;
+  lane = Math.max(0, Math.min(2, lane + direction));
+}
+
+function jump() {
+  if (!running || jumping > 0) return;
+
+  jumping = 100;
+
+  const jumpTimer = setInterval(() => {
+    jumping -= 8;
+    if (jumping <= 0) {
+      jumping = 0;
+      clearInterval(jumpTimer);
+    }
+  }, 30);
+}
+
+function startGame() {
+  if (running) return;
+
+  cancelAnimationFrame(animationId);
+
+  running = true;
+  score = 0;
+  coins = 0;
+  lane = 1;
+  jumping = 0;
+  obstacles = [];
+  pickups = [];
+  speed = 3;
+  lastSpawn = 0;
+  lastTime = 0;
+
+  document.getElementById("gameMessage").textContent =
+    "C'est parti ! Évite les obstacles !";
+
+  document.getElementById("startButton").textContent = "▶ EN COURS";
+
+  animationId = requestAnimationFrame(gameLoop);
+}
+
+function gameLoop(timestamp) {
+  if (!running) return;
+
+  if (!lastTime) lastTime = timestamp;
+
+  const delta = Math.min((timestamp - lastTime) / 16.67, 2);
+  lastTime = timestamp;
+
+  score += delta;
+  speed = Math.min(7, 3 + score / 1500);
+
+  if (timestamp - lastSpawn > Math.max(450, 1000 - speed * 60)) {
+    const newLane = Math.floor(Math.random() * 3);
+
+    obstacles.push({
+      lane: newLane,
+      y: 125,
+      type: Math.random() > 0.7 ? "train" : "barrier"
+    });
+
+    if (Math.random() > 0.45) {
+      pickups.push({
+        lane: Math.floor(Math.random() * 3),
+        y: 125
+      });
+    }
+
+    lastSpawn = timestamp;
+  }
+
+  obstacles.forEach(o => {
+    o.y += speed * delta;
+
+    const closeToPlayer = o.y > 255 && o.y < 315;
+
+    if (
+      closeToPlayer &&
+      o.lane === lane &&
+      !(jumping > 35 && o.type === "barrier")
+    ) {
+      endGame();
+    }
+  });
+
+  pickups.forEach(p => {
+    p.y += speed * delta;
+
+    if (
+      !p.taken &&
+      p.y > 265 &&
+      p.y < 315 &&
+      p.lane === lane
+    ) {
+      p.taken = true;
+      coins++;
+    }
+  });
+
+  obstacles = obstacles.filter(o => o.y < 390);
+  pickups = pickups.filter(p => p.y < 390 && !p.taken);
+
+  document.getElementById("currentScore").textContent = Math.floor(score);
+  document.getElementById("currentCoins").textContent = coins;
+
+  drawScene();
+
+  if (running) {
+    animationId = requestAnimationFrame(gameLoop);
+  }
+}
+
+function endGame() {
+  running = false;
+
+  const finalScore = Math.floor(score);
+
+  if (finalScore > best) {
+    best = finalScore;
+    storage.set("subwayranked-best", best);
+  }
+
+  if (coins > bestCoins) {
+    bestCoins = coins;
+    storage.set("subwayranked-coins", bestCoins);
+  }
+
+  scores.push({
+    name: "Joueur",
+    score: finalScore
+  });
+
+  scores.sort((a, b) => b.score - a.score);
+  scores = scores.slice(0, 10);
+
+  storage.set("subwayranked-scores", scores);
+
+  updateStats();
+  renderLeaderboard();
+
+  document.getElementById("gameMessage").textContent =
+    "Partie terminée ! Score : " + finalScore +
+    " · Pièces : " + coins;
+
+  document.getElementById("startButton").textContent = "↻ REJOUER";
+}
+
+function updateStats() {
+  document.getElementById("bestScore").textContent =
+    best.toLocaleString("fr-FR");
+
+  document.getElementById("bestCoins").textContent =
+    bestCoins.toLocaleString("fr-FR");
+}
+
+function renderLeaderboard() {
+  const rows = document.getElementById("leaderboardRows");
+
+  if (scores.length === 0) {
+    rows.innerHTML = `
+      <div class="player-row">
+        <span class="rank">🏁</span>
+        <div>
+          <div class="player-name">À toi de jouer !</div>
+          <div class="player-subtitle">Sois le premier à établir un record.</div>
+        </div>
+        <div class="score">—</div>
+      </div>`;
+    return;
+  }
+
+  rows.innerHTML = scores.map((player, index) => `
+    <div class="player-row">
+      <span class="rank">${["🥇", "🥈", "🥉"][index] || (index + 1)}</span>
+      <div>
+        <div class="player-name">${escapeHTML(player.name)}</div>
+        <div class="player-subtitle">Coureur SubwayRanked</div>
+      </div>
+      <div class="score">${player.score.toLocaleString("fr-FR")}</div>
+    </div>
+  `).join("");
+}
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+document.addEventListener("keydown", event => {
+  if (!running) return;
+
+  if (["ArrowLeft", "ArrowRight", "ArrowUp", " "].includes(event.key)) {
+    event.preventDefault();
+  }
+
+  if (event.key === "ArrowLeft" || event.key.toLowerCase() === "q") {
+    movePlayer(-1);
+  }
+
+  if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") {
+    movePlayer(1);
+  }
+
+  if (event.key === "ArrowUp" || event.key === " ") {
+    jump();
+  }
+});
+
+canvas.addEventListener("pointerdown", event => {
+  if (!running) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+
+  if (x < rect.width / 3) movePlayer(-1);
+  else if (x > rect.width * 2 / 3) movePlayer(1);
+  else jump();
+});
+
+drawScene();
+updateStats();
+renderLeaderboard();
+</script>
+
 </body>
 </html>
